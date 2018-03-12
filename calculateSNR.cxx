@@ -4,22 +4,21 @@
 #include <iostream>
 
 using namespace std;
+static const Double_t dPET = 40; // diameter of PET (mm)
+static const Double_t dROI = 8;  // diameter of ROI (mm)
+static const Double_t per = 0.8; // percentage
 
 bool IsROI(const int ix, const int iy, const int i_fin) {
-  const Double_t per = 0.8; // percentage
-  const Double_t dROI = 3;  // diameter of ROI (mm)
-  const Double_t dPET = 40; // diameter of PET (mm)
   Double_t thrX = 0.5*dPET*per;
   Double_t x = dPET/(i_fin*2)*ix;
   Double_t y = dPET/(i_fin*2)*iy;
-  if(sqrt((x-thrX)*(x-thrX)+y*y)<dROI){
+  if(sqrt((x-thrX)*(x-thrX)+y*y)<dROI/2){
     // cout << "x: " << x << ", y: " << y << endl;
     return true;
   }else{
     return false;
   }
 }
-
  
 void calculateSNR(){
   const int i_fin=160;
@@ -28,8 +27,8 @@ void calculateSNR(){
   TH2D* h_TOF   = (TH2D*)file->Get("himage_tof;1");
   TH2D* h_NoTOF = (TH2D*)file->Get("himage;1");
 
-  cout << "Total number of bins X: " << h_TOF  ->GetNbinsX() << " Y: " << h_TOF  ->GetNbinsY() << endl;
-  cout << "Total number of bins X: " << h_NoTOF->GetNbinsX() << " Y: " << h_NoTOF->GetNbinsY() << endl;
+  // cout << "Total number of bins X: " << h_TOF  ->GetNbinsX() << " Y: " << h_TOF  ->GetNbinsY() << endl;
+  // cout << "Total number of bins X: " << h_NoTOF->GetNbinsX() << " Y: " << h_NoTOF->GetNbinsY() << endl;
    
   Double_t sum_TOF; 
   Double_t sum_NoTOF; 
@@ -63,8 +62,8 @@ void calculateSNR(){
   // cout << "sd without TOF: " << sd_NoTOF << endl;
   Double_t snr_TOF  = mean_TOF  /sd_TOF;
   Double_t snr_NoTOF= mean_NoTOF/sd_NoTOF;
+  cout << dROI << " cm diameter and placed along x axis centerd at " << per << endl; 
   cout << "SNR with TOF: " << snr_TOF << endl; 
   cout << "SNR without TOF: " << snr_NoTOF << endl; 
-
-  // cout << "SNR_TOF/SNR_NoTOF: " << snr_TOF/snr_NoTOF << endl;
+  cout << "SNR_TOF/SNR_NoTOF: " << snr_TOF/snr_NoTOF << endl;
 }
