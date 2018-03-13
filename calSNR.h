@@ -8,6 +8,7 @@
 #ifndef calSNR_h
 #define calSNR_h
 
+#include <math.h>
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
@@ -46,6 +47,15 @@ public :
    virtual void     Loop();
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+
+   // fuction for selection
+   virtual Bool_t IsSelection(Double_t& x, Double_t& y);
+   virtual Bool_t IsROI(Double_t& x);
+
+   const Double_t m_dPET=40; // diameter of PET (mm)
+   const Double_t m_dROI=4; // length of ROI (mm)
+   const Double_t m_dSQR=24; // lenth of selection to project (mm)
+   const Double_t m_per =0.5; // percentage along the x axis for central position of ROI
 };
 
 #endif
