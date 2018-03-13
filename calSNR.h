@@ -49,8 +49,8 @@ public :
    virtual void     Show(Long64_t entry = -1);
 
    // fuction for selection
-   virtual Bool_t IsSelection(Double_t& x, Double_t& y);
-   virtual Bool_t IsROI(Double_t& x);
+   virtual Bool_t IsSelection(const Double_t& x, const Double_t& y);
+   virtual Bool_t IsROI(const Double_t& x);
 
    const Double_t m_dPET=40; // diameter of PET (mm)
    const Double_t m_dROI=4; // length of ROI (mm)
