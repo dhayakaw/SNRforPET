@@ -5,14 +5,14 @@
 
 using namespace std;
 
-static const Double_t dPET = 40; // diameter of PET (mm)
-static const Double_t dROI = 6;  // diameter of ROI (mm)
-static const Double_t per = 0.8; // percentage
+const Double_t dPET = 40; // diameter of PET (mm)
+const Double_t dROI = 6;  // diameter of ROI (mm)
+const Double_t per = 0.8; // percentage
 
 bool IsROI(const int ix, const int iy, const int i_fin) {
   Double_t thrX = 0.5*dPET*per;
-  Double_t x = dPET/i_fin*ix;
-  Double_t y = dPET/i_fin*iy;
+  Double_t x = dPET/i_fin*(ix-1);
+  Double_t y = dPET/i_fin*(iy-1);
   if(sqrt((x-thrX)*(x-thrX)+y*y)<dROI/2){
     // cout << "x: " << x << ", y: " << y << endl;
     return true;
