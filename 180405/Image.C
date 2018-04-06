@@ -40,7 +40,6 @@ void Image::Loop()
   // First loop to calculate mean of ROI
   TH2D* h2_TOF   = new TH2D("h2_TOF",  "",160,-20,20,160,-20,20);  
   TH2D* h2_noTOF = new TH2D("h2_noTOF","",160,-20,20,160,-20,20);  
-  // Long64_t nSelectedEntries=0;
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     Long64_t ientry = LoadTree(jentry);
@@ -49,9 +48,6 @@ void Image::Loop()
     // if (Cut(ientry) < 0) continue;
     h2_TOF  ->Fill(x,y,tof);
     h2_noTOF->Fill(x,y,notof);
-    // sum_TOF  +=tof;
-    // sum_noTOF+=notof;
-    // nSelectedEntries++;
   }
 
   std::cout << "Normalization" << std::endl;
@@ -65,45 +61,45 @@ void Image::Loop()
   std::cout << "Normalize the reconstructed image" << std::endl;
   TH2D* h2_TOF_norm   = new TH2D("h2_TOF_norm",    "",160,-20,20,160,-20,20);
   TH2D* h2_noTOF_norm = new TH2D("h2_noTOF_norm",  "",160,-20,20,160,-20,20);
-  Int_t nBins = h2_emi->GetMaximumBin();
-  for (int ix = 1; ix<=nBins; ix++) {
-    for (int iy = 1; iy<=nBins; iy++) {
-      Double_t emi = h2_emi->GetBinContent(ix,iy);
-      Double_t tof = h2_TOF->GetBinContent(ix,iy);
-      Double_t ntof= h2_noTOF->GetBinContent(ix,iy);
-      if (emi!=0.){
+  TH2D* h2_ROI        = new TH2D("h2_ROI",         "",160,-20,20,160,-20,20);
+  const Int_t nBins = h2_emi->GetMaximumBin();
+  for (Int_t ix = 1; ix<=nBins; ix++) {
+    for (Int_t iy = 1; iy<=nBins; iy++) {
+        h2_ROI       ->SetBinContent(ix, iy, 1);
+      // if (IsSelection(ix,iy,nBins)){
+        Double_t emi = h2_emi->GetBinContent(ix,iy);
+        Double_t tof = h2_TOF->GetBinContent(ix,iy);
+        Double_t ntof= h2_noTOF->GetBinContent(ix,iy);
         h2_TOF_norm  ->SetBinContent(ix, iy, (tof/emi));
         h2_noTOF_norm->SetBinContent(ix, iy, (ntof/emi));
-      }
+      // }
     }
   }
 
 
   Double_t sum_TOF, sum_noTOF;
   Int_t totalBins=0;
-  for (int ix = 1; ix<=nBins; ix++) {
-    for (int iy = 1; iy<=nBins; iy++) {
-      Double_t emi = h2_emi->GetBinContent(ix,iy);
-      if (emi!=0.){
+  for (Int_t ix = 1; ix<=nBins; ix++) {
+    for (Int_t iy = 1; iy<=nBins; iy++) {
+      // if (IsSelection(ix,iy,nBins)){
         sum_TOF   += h2_TOF_norm  ->GetBinContent(ix,iy);
         sum_noTOF += h2_noTOF_norm->GetBinContent(ix,iy);
         totalBins++;
-      }
+      // }
     }
   }
   Double_t mean_TOF   = sum_TOF/(Double_t)totalBins;
   Double_t mean_noTOF = sum_noTOF/(Double_t)totalBins;
 
   Double_t sd2_TOF, sd2_noTOF;
-  for (int ix = 1; ix<=nBins; ix++) {
-    for (int iy = 1; iy<=nBins; iy++) {
-      Double_t emi = h2_emi->GetBinContent(ix,iy);
-      if (emi!=0.){
+  for (Int_t ix = 1; ix<=nBins; ix++) {
+    for (Int_t iy = 1; iy<=nBins; iy++) {
+      // if (IsSelection(ix,iy,nBins)){
         Double_t tof   = h2_TOF_norm  ->GetBinContent(ix,iy);
         Double_t notof = h2_noTOF_norm->GetBinContent(ix,iy);
         sd2_TOF  +=pow((tof  -mean_TOF),2);
         sd2_noTOF+=pow((notof-mean_noTOF),2);
-      }
+      // }
     }
   }
   const Double_t sd_TOF   = sqrt(sd2_TOF  /(Double_t)totalBins);
@@ -129,4 +125,8 @@ void Image::Loop()
   h2_noTOF_norm->Draw("colz");
   c1->cd(3);
   h2_emi->Draw("colz");
+  c1->cd(6);
+  h2_ROI->Draw("colz");
+  c1->SaveAs("180406_validation04.pdf");
 }
+
