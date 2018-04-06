@@ -83,9 +83,12 @@ void Image::Loop()
   Int_t totalBins=0;
   for (int ix = 1; ix<=nBins; ix++) {
     for (int iy = 1; iy<=nBins; iy++) {
-      sum_TOF   += h2_TOF_norm  ->GetBinContent(ix,iy);
-      sum_noTOF += h2_noTOF_norm->GetBinContent(ix,iy);
-      totalBins++;
+      Double_t emi = h2_emi->GetBinContent(ix,iy);
+      if (emi!=0.){
+        sum_TOF   += h2_TOF_norm  ->GetBinContent(ix,iy);
+        sum_noTOF += h2_noTOF_norm->GetBinContent(ix,iy);
+        totalBins++;
+      }
     }
   }
   Double_t mean_TOF   = sum_TOF/(Double_t)totalBins;
@@ -94,10 +97,13 @@ void Image::Loop()
   Double_t sd2_TOF, sd2_noTOF;
   for (int ix = 1; ix<=nBins; ix++) {
     for (int iy = 1; iy<=nBins; iy++) {
-      Double_t tof   = h2_TOF_norm  ->GetBinContent(ix,iy);
-      Double_t notof = h2_noTOF_norm->GetBinContent(ix,iy);
-      sd2_TOF  +=pow((tof  -mean_TOF),2);
-      sd2_noTOF+=pow((notof-mean_noTOF),2);
+      Double_t emi = h2_emi->GetBinContent(ix,iy);
+      if (emi!=0.){
+        Double_t tof   = h2_TOF_norm  ->GetBinContent(ix,iy);
+        Double_t notof = h2_noTOF_norm->GetBinContent(ix,iy);
+        sd2_TOF  +=pow((tof  -mean_TOF),2);
+        sd2_noTOF+=pow((notof-mean_noTOF),2);
+      }
     }
   }
   const Double_t sd_TOF   = sqrt(sd2_TOF  /(Double_t)totalBins);
