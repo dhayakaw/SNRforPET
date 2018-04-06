@@ -46,9 +46,9 @@ class Image {
     virtual void     Loop();
     virtual Bool_t   Notify();
     virtual void     Show(Long64_t entry = -1);
-    // bool IsSelection(const Int_t ix, const Int_t iy, const Int_t nBins);
 
   private:  
+    const bool IsSelection(const Int_t ix, const Int_t iy, const Int_t nBins);
     const Double_t m_radius=15.; //mm
     const Double_t m_size=40.; //mm
 }; 
@@ -143,8 +143,7 @@ Int_t Image::Cut(Long64_t entry)
   // returns -1 otherwise.
   return 1;
 }
-/*
-bool Image::IsSelection(const Int_t ix, const Int_t iy, const Int_t nBins) 
+const bool Image::IsSelection(const Int_t ix, const Int_t iy, const Int_t nBins) 
 {
   Double_t x = m_size*(-0.5 + ((Double_t)ix-0.5)/(Double_t)nBins);
   Double_t y = m_size*(-0.5 + ((Double_t)iy-0.5)/(Double_t)nBins);
@@ -155,5 +154,4 @@ bool Image::IsSelection(const Int_t ix, const Int_t iy, const Int_t nBins)
     return true;
   }
 }
-*/
 #endif // #ifdef Image_cxx
