@@ -46,8 +46,10 @@ void Image::Loop()
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     // if (Cut(ientry) < 0) continue;
-    h2_TOF  ->Fill(x,y,tof);
-    h2_noTOF->Fill(x,y,notof);
+    // h2_TOF  ->Fill(x,y,tof);
+    // h2_noTOF->Fill(x,y,notof);
+    h2_TOF  ->Fill(x,y,fbptof);
+    h2_noTOF->Fill(x,y,fbp);
   }
 
   std::cout << "Normalization" << std::endl;
@@ -126,6 +128,6 @@ void Image::Loop()
   h2_emi->Draw("colz");
   c1->cd(6);
   h2_ROI->Draw("colz");
-  c1->SaveAs("180406_validation04.pdf");
+  c1->SaveAs("180406_validation_fbp_raidus15.pdf");
 }
 
